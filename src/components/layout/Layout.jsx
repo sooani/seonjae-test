@@ -5,8 +5,7 @@ import Header from './Header'
 const Layout = ({ children }) => {
   const bgStyle = {
     backgroundImage: 'url(/images/bg.png)',
-
-  }
+  };
   return (
     <div
       className="bg-mbti-yellow bg-repeat h-full px-4 overflow-auto font-pretendard"
@@ -16,7 +15,7 @@ const Layout = ({ children }) => {
         <main className="px-4 h-full w-full max-w-lg mx-auto pt-12.5"> {children}</main>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Layout
+export default Layout;

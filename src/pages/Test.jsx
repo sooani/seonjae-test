@@ -1,59 +1,68 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import Progress from "../components/Progress";
+import Question from "../components/Question";
+import Answer from "../components/Answer";
+import { initialMbtiAnswer, initialMbtiQuestion } from "../data/initialState";
+import { mbtiAnswerList, mbtiQuestionList } from "../data/response";
+import { useNavigate } from "react-router-dom";
 
 const Test = () => {
   // logic
+  const history = useNavigate()
+
+  const [currentStep, setCurrentStep] = useState(1);
+  const [mbtiQuestion, setMbtiQuestion] = useState(initialMbtiQuestion);
+  const [mbtiAnswer, setMbtiAnswer] = useState(initialMbtiAnswer);
+
+  const {step, questionText} = mbtiQuestion;
+
+  const hanleAnswerClick = () => {
+    currentStep < 12 ? setCurrentStep(currentStep + 1) : goResult();
+    //state 업데이트 안함
+    //12 까지만
+  };
+  
+  const goResult = () => {
+    history("/result");
+  }
+
+  //1. 원하는 state 감시
+  useEffect(() => {
+    console.log("current", currentStep);
+    // state변경시 실행될 실행문
+    const nextQuestion = mbtiQuestionList.find(
+      (item) => item.step === currentStep
+    );
+    nextQuestion && setMbtiQuestion(nextQuestion);
+
+    const nextAnswer = mbtiAnswerList.find(
+      (answer) => answer.questionStep === currentStep
+    );
+    nextAnswer && setMbtiAnswer(nextAnswer);
+  }, [currentStep]);
+
+  //2. 진입시 딱 한번만 실행
+  useEffect(() => {
+    //진입 시 실행될 실행문
+  }, [])
+  //3. 모든 state가 변경될때 실행
+  useEffect(() => {
+    //페이지에서 하나의 state라도 변경될때 실행될 실행문
+  })
+  //1. answer버튼 클릭 이벤트 잡기
+  //2. mbtiQuestion.step 값 변경
 
   // view
   return (
     <section className="h-full py-12 flex flex-col justify-between">
       {/* START: Progress 컴포넌트 */}
-      <div className="w-full h-6 bg-white border-2 rounded-xl border-mbti-gray relative">
-        <div
-          className="absolute w-11 top-1/2 transition-all transform -translate-x-1/2 -translate-y-1/2"
-          style={{ left: "10%" }}
-        >
-          <img
-            src="./images/progress.png"
-            className="block w-full h-auto"
-            alt="status 이미지"
-          />
-        </div>
-        <div className="w-full h-full rounded-xl overflow-hidden">
-          <span
-            className="block h-full bg-mbti-pink transition-all"
-            style={{ width: `calc(10% + 5px)` }}
-          ></span>{" "}
-          {/* status */}
-        </div>
-      </div>
+      <Progress />
       {/* END: Progress 컴포넌트 */}
       {/* START: Question 컴포넌트 */}
-      <div className="text-center">
-        <h3 className="text-4xl font-cafe24surround">Qusetion 1</h3>
-        <span className="block pt-10 text-2xl font-cafe24surround">
-          선재가 이클립스 공연에 당신을 초대한다면?
-        </span>
-      </div>
+      <Question text={questionText} step={step} />
       {/* END: Question 컴포넌트 */}
       {/* START: Answer 컴포넌트 */}
-      <div>
-        <div className="py-2">
-          <button
-            type="button"
-            className="block w-full p-4 rounded-xl bg-white border-2 border-black"
-          >
-            꺄아! 당연히 가서 떼창도 하고 다른 팬들이랑 같이 즐겨야지!
-          </button>
-        </div>
-        <div className="py-2">
-          <button
-            type="button"
-            className="block w-full p-4 rounded-xl bg-white border-2 border-black"
-          >
-            선재가 날 초대해 주다니..오로지 선재에게만 집중하고 싶어
-          </button>
-        </div>
-      </div>
+      <Answer data={mbtiAnswer} onAnswerClick={hanleAnswerClick} />
       {/* END: Answer 컴포넌트 */}
     </section>
   );
